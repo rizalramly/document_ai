@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Full-Screen Engineering Drawing Viewer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6", 
+                        "background-dark": "#0f111a", 
+                        "surface-dark": "#1a1d2d", 
+                        "surface-light": "#2a2d3d",
+                        "accent-blue": "#2563eb",
+                        "accent-purple": "#9333ea",
+                        "tool-bg": "rgba(26, 29, 45, 0.95)",
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                        mono: ["Courier New", "monospace"],
+                    },
+                    cursor: {
+                        'crosshair': 'crosshair',
+                        'zoom-in': 'zoom-in',
+                        'zoom-out': 'zoom-out',
+                        'grab': 'grab',
+                    }
+                },
+            },
+        };
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1d2d;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+        .grid-bg {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(50, 50, 50, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(50, 50, 50, 0.1) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-gray-200 font-sans h-screen flex overflow-hidden dark">
+<aside class="w-80 bg-surface-dark border-r border-gray-800 flex flex-col flex-shrink-0 z-20 shadow-xl">
+<div class="h-16 flex items-center justify-between px-4 border-b border-gray-800 bg-surface-dark">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary">engineering</span>
+<span class="font-bold text-sm tracking-wide text-white">DOCS.ai Viewer</span>
+</div>
+<button class="text-gray-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">menu_open</span>
+</button>
+</div>
+<div class="p-4 border-b border-gray-800">
+<h2 class="text-sm font-semibold text-white mb-1">P&amp;ID - Turbine System 04</h2>
+<div class="flex items-center space-x-2 text-xs text-gray-400">
+<span class="px-1.5 py-0.5 rounded bg-blue-900 text-blue-200 border border-blue-800">REV 3.2</span>
+<span>Last mod: 2h ago</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-6">
+<div>
+<h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Layers</h3>
+<div class="space-y-2">
+<label class="flex items-center space-x-2 cursor-pointer group">
+<input checked="" class="form-checkbox h-4 w-4 text-primary rounded border-gray-600 bg-gray-800 focus:ring-primary focus:ring-offset-gray-900" type="checkbox"/>
+<span class="text-sm text-gray-300 group-hover:text-white">Base Schematic</span>
+</label>
+<label class="flex items-center space-x-2 cursor-pointer group">
+<input checked="" class="form-checkbox h-4 w-4 text-primary rounded border-gray-600 bg-gray-800 focus:ring-primary focus:ring-offset-gray-900" type="checkbox"/>
+<span class="text-sm text-gray-300 group-hover:text-white">Electrical Overlay</span>
+</label>
+<label class="flex items-center space-x-2 cursor-pointer group">
+<input class="form-checkbox h-4 w-4 text-primary rounded border-gray-600 bg-gray-800 focus:ring-primary focus:ring-offset-gray-900" type="checkbox"/>
+<span class="text-sm text-gray-300 group-hover:text-white">Fluid Dynamics</span>
+</label>
+</div>
+</div>
+<div>
+<h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 flex justify-between items-center">
+                Annotations
+                <span class="bg-gray-700 text-white text-[10px] px-1.5 py-0.5 rounded-full">3</span>
+</h3>
+<div class="space-y-3">
+<div class="bg-surface-light rounded p-3 border-l-2 border-yellow-500 hover:bg-gray-700 transition-colors cursor-pointer group">
+<div class="flex justify-between items-start">
+<span class="text-xs font-medium text-yellow-500">Warning</span>
+<span class="text-[10px] text-gray-500">10:42 AM</span>
+</div>
+<p class="text-sm text-gray-200 mt-1">Valve pressure reading mismatch.</p>
+<div class="mt-2 flex items-center space-x-2">
+<div class="w-4 h-4 rounded-full bg-gray-600 flex items-center justify-center text-[8px] font-bold text-white">JD</div>
+<span class="text-xs text-gray-400">John Doe</span>
+</div>
+</div>
+<div class="bg-surface-light rounded p-3 border-l-2 border-primary hover:bg-gray-700 transition-colors cursor-pointer group">
+<div class="flex justify-between items-start">
+<span class="text-xs font-medium text-primary">Note</span>
+<span class="text-[10px] text-gray-500">Yesterday</span>
+</div>
+<p class="text-sm text-gray-200 mt-1">Check flow rate sensor calibration.</p>
+<div class="mt-2 flex items-center space-x-2">
+<div class="w-4 h-4 rounded-full bg-indigo-600 flex items-center justify-center text-[8px] font-bold text-white">AS</div>
+<span class="text-xs text-gray-400">Alice Smith</span>
+</div>
+</div>
+<div class="bg-surface-light rounded p-3 border-l-2 border-red-500 hover:bg-gray-700 transition-colors cursor-pointer group">
+<div class="flex justify-between items-start">
+<span class="text-xs font-medium text-red-500">Critical</span>
+<span class="text-[10px] text-gray-500">2 days ago</span>
+</div>
+<p class="text-sm text-gray-200 mt-1">Potential leak point identified here.</p>
+<div class="mt-2 flex items-center space-x-2">
+<div class="w-4 h-4 rounded-full bg-green-600 flex items-center justify-center text-[8px] font-bold text-white">MK</div>
+<span class="text-xs text-gray-400">Mike K.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 relative bg-[#12141c] flex flex-col min-w-0 overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-16 z-30 pointer-events-none flex justify-between items-start p-4">
+<div class="pointer-events-auto bg-tool-bg backdrop-blur-sm rounded-lg border border-gray-700 px-4 py-2 flex items-center space-x-3 shadow-lg">
+<button class="text-gray-400 hover:text-white flex items-center">
+<span class="material-symbols-outlined mr-1 text-sm">arrow_back</span>
+<span class="text-sm">Library</span>
+</button>
+<span class="text-gray-600">/</span>
+<span class="text-sm font-medium text-white">Boiler System</span>
+<span class="text-gray-600">/</span>
+<span class="text-sm text-gray-300">RCA_JMJG_COAL_ST_FSHUT.pdf</span>
+</div>
+<button class="pointer-events-auto bg-red-900/80 hover:bg-red-700 text-white p-2 rounded-lg border border-red-800 shadow-lg transition-colors flex items-center justify-center w-10 h-10">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="absolute left-6 top-1/2 transform -translate-y-1/2 z-30 flex flex-col space-y-2 pointer-events-none">
+<div class="bg-tool-bg backdrop-blur-md border border-gray-700 rounded-lg shadow-2xl p-2 flex flex-col space-y-4 pointer-events-auto">
+<button class="group relative flex items-center justify-center w-10 h-10 rounded hover:bg-primary/20 text-gray-400 hover:text-primary transition-colors tooltip-trigger">
+<span class="material-symbols-outlined">near_me</span>
+<span class="absolute left-full ml-2 px-2 py-1 bg-black text-xs text-white rounded opacity-0 group-hover:opacity-100 whitespace-nowrap z-50 pointer-events-none transition-opacity">Select</span>
+</button>
+<div class="h-px bg-gray-700 w-full"></div>
+<button class="group relative flex items-center justify-center w-10 h-10 rounded hover:bg-primary/20 text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">ink_highlighter</span>
+<span class="absolute left-full ml-2 px-2 py-1 bg-black text-xs text-white rounded opacity-0 group-hover:opacity-100 whitespace-nowrap z-50 pointer-events-none transition-opacity">Highlight</span>
+</button>
+<button class="group relative flex items-center justify-center w-10 h-10 rounded hover:bg-primary/20 text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">draw</span>
+<span class="absolute left-full ml-2 px-2 py-1 bg-black text-xs text-white rounded opacity-0 group-hover:opacity-100 whitespace-nowrap z-50 pointer-events-none transition-opacity">Freehand</span>
+</button>
+<button class="group relative flex items-center justify-center w-10 h-10 rounded hover:bg-primary/20 text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">text_fields</span>
+<span class="absolute left-full ml-2 px-2 py-1 bg-black text-xs text-white rounded opacity-0 group-hover:opacity-100 whitespace-nowrap z-50 pointer-events-none transition-opacity">Text Box</span>
+</button>
+<button class="group relative flex items-center justify-center w-10 h-10 rounded hover:bg-primary/20 text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">straighten</span>
+<span class="absolute left-full ml-2 px-2 py-1 bg-black text-xs text-white rounded opacity-0 group-hover:opacity-100 whitespace-nowrap z-50 pointer-events-none transition-opacity">Measure</span>
+</button>
+<button class="group relative flex items-center justify-center w-10 h-10 rounded hover:bg-primary/20 text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">sticky_note_2</span>
+<span class="absolute left-full ml-2 px-2 py-1 bg-black text-xs text-white rounded opacity-0 group-hover:opacity-100 whitespace-nowrap z-50 pointer-events-none transition-opacity">Sticky Note</span>
+</button>
+<div class="h-px bg-gray-700 w-full"></div>
+<button class="group relative flex items-center justify-center w-10 h-10 rounded hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+<span class="absolute left-full ml-2 px-2 py-1 bg-black text-xs text-white rounded opacity-0 group-hover:opacity-100 whitespace-nowrap z-50 pointer-events-none transition-opacity">Delete Selected</span>
+</button>
+</div>
+</div>
+<div class="flex-1 w-full h-full relative overflow-hidden bg-[#12141c] cursor-grab active:cursor-grabbing grid-bg flex items-center justify-center">
+<div class="relative w-[1200px] h-[800px] bg-white bg-opacity-5 border border-gray-700 shadow-2xl transform scale-75 origin-center">
+<svg class="select-none pointer-events-none opacity-80" height="100%" viewBox="0 0 1200 800" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="20" id="smallGrid" patternUnits="userSpaceOnUse" width="20">
+<path d="M 20 0 L 0 0 0 20" fill="none" stroke="#333" stroke-width="0.5"></path>
+</pattern>
+</defs>
+<rect fill="url(#smallGrid)" height="100%" width="100%"></rect>
+<path d="M100,400 L300,400 L300,200 L600,200 L600,400 L900,400" fill="none" stroke="#60a5fa" stroke-width="4"></path>
+<circle cx="300" cy="400" fill="#1e3a8a" r="10" stroke="#60a5fa" stroke-width="2"></circle>
+<circle cx="600" cy="400" fill="#1e3a8a" r="10" stroke="#60a5fa" stroke-width="2"></circle>
+<path d="M900,350 L1100,400 L900,450 Z" fill="none" stroke="#9333ea" stroke-width="3"></path>
+<rect fill="#1e1e1e" height="100" stroke="#9333ea" stroke-width="2" width="20" x="880" y="350"></rect>
+<path d="M300,200 L300,100 L500,100" fill="none" stroke="#4ade80" stroke-dasharray="10,5" stroke-width="2"></path>
+<rect fill="none" height="40" stroke="#4ade80" stroke-width="2" width="60" x="500" y="80"></rect>
+<text fill="#4ade80" font-family="monospace" font-size="14" x="510" y="105">SENS-01</text>
+<text fill="#60a5fa" font-family="monospace" font-size="16" x="120" y="380">MAIN FEED LINE</text>
+<text fill="#9333ea" font-family="monospace" font-size="16" x="920" y="340">HP TURBINE</text>
+</svg>
+<div class="absolute top-[380px] left-[280px] w-10 h-10 border-2 border-yellow-500 rounded-full animate-pulse bg-yellow-500/20"></div>
+<div class="absolute top-[370px] left-[330px] bg-surface-dark border border-yellow-500 text-yellow-500 text-xs px-2 py-1 rounded shadow-lg">
+                Check Pressure
+            </div>
+<div class="absolute top-[180px] left-[580px] w-10 h-10 border-2 border-red-500 rounded-sm bg-red-500/10"></div>
+</div>
+</div>
+<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-tool-bg backdrop-blur-md border border-gray-700 rounded-full px-6 py-2 shadow-2xl flex items-center space-x-6 z-30">
+<div class="flex items-center space-x-2 border-r border-gray-600 pr-4">
+<span class="text-xs text-gray-400 font-mono">Page 1/14</span>
+</div>
+<div class="flex items-center space-x-3">
+<button class="text-gray-400 hover:text-white"><span class="material-symbols-outlined">remove</span></button>
+<input class="w-32 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-primary" max="200" min="10" type="range" value="75"/>
+<button class="text-gray-400 hover:text-white"><span class="material-symbols-outlined">add</span></button>
+<span class="text-sm font-mono text-white w-10 text-right">75%</span>
+</div>
+<div class="flex items-center space-x-3 border-l border-gray-600 pl-4">
+<button class="text-gray-400 hover:text-white tooltip-trigger" title="Rotate Left">
+<span class="material-symbols-outlined">rotate_left</span>
+</button>
+<button class="text-gray-400 hover:text-white tooltip-trigger" title="Rotate Right">
+<span class="material-symbols-outlined">rotate_right</span>
+</button>
+<button class="text-gray-400 hover:text-white tooltip-trigger" title="Reset View">
+<span class="material-symbols-outlined">center_focus_strong</span>
+</button>
+</div>
+</div>
+</main>
+<aside class="w-96 bg-surface-dark border-l border-gray-800 flex flex-col flex-shrink-0 z-20 shadow-xl relative">
+<button class="absolute -left-3 top-20 bg-primary rounded-full p-1 text-white shadow-lg hover:bg-blue-600 focus:outline-none z-50">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+<div class="h-16 flex items-center justify-between px-6 border-b border-gray-800 bg-surface-dark">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-accent-purple">smart_toy</span>
+<span class="font-bold text-sm tracking-wide text-white">DOCS Assistant</span>
+</div>
+<span class="text-xs text-green-400 flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+            Online
+        </span>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-4 bg-background-dark/50">
+<div class="flex items-start space-x-3">
+<div class="w-8 h-8 rounded bg-primary flex-shrink-0 flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm">smart_toy</span>
+</div>
+<div class="flex flex-col space-y-1 max-w-[85%]">
+<div class="bg-surface-light rounded-lg rounded-tl-none p-3 border border-gray-700 text-sm text-gray-200 shadow-sm">
+<p>I'm analyzing the <strong>Turbine System 04</strong> P&amp;ID. I can help you locate components, explain the flow, or identify potential failure points based on the recent RCA report.</p>
+</div>
+<span class="text-[10px] text-gray-500">10:45 AM</span>
+</div>
+</div>
+<div class="flex items-start space-x-3 flex-row-reverse space-x-reverse">
+<div class="w-8 h-8 rounded-full bg-gray-600 flex-shrink-0 flex items-center justify-center text-white text-xs">EU</div>
+<div class="flex flex-col space-y-1 max-w-[85%] items-end">
+<div class="bg-primary/20 rounded-lg rounded-tr-none p-3 border border-primary/30 text-sm text-white shadow-sm">
+<p>Where is the pressure relief valve located relative to the HP Turbine?</p>
+</div>
+<span class="text-[10px] text-gray-500">10:46 AM</span>
+</div>
+</div>
+<div class="flex items-start space-x-3">
+<div class="w-8 h-8 rounded bg-primary flex-shrink-0 flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm">smart_toy</span>
+</div>
+<div class="flex flex-col space-y-1 max-w-[85%]">
+<div class="bg-surface-light rounded-lg rounded-tl-none p-3 border border-gray-700 text-sm text-gray-200 shadow-sm">
+<p>The Pressure Relief Valve (PRV-204) is located on the main steam line, approximately 5 meters upstream from the HP Turbine inlet. <br/><br/>I've highlighted it in <span class="text-accent-purple font-bold">purple</span> on the diagram for you.</p>
+<div class="mt-2 pt-2 border-t border-gray-700">
+<div class="flex items-center gap-2 text-xs text-gray-400">
+<span class="material-symbols-outlined text-xs">verified</span>
+                            Source: Page 4, Section 2.1
+                        </div>
+</div>
+</div>
+<span class="text-[10px] text-gray-500">10:46 AM</span>
+</div>
+</div>
+</div>
+<div class="p-4 bg-surface-dark border-t border-gray-800">
+<div class="relative">
+<textarea class="w-full bg-background-dark border border-gray-700 text-gray-200 rounded-lg pl-3 pr-10 py-2 focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm shadow-inner placeholder-gray-500" placeholder="Ask about this drawing..." rows="2"></textarea>
+<button class="absolute bottom-2 right-2 text-primary hover:text-blue-400 transition-colors">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+<div class="mt-2 flex justify-between items-center px-1">
+<button class="text-xs text-gray-400 hover:text-white flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">attach_file</span>
+                Attach ref
+            </button>
+<span class="text-[10px] text-gray-600">AI can make mistakes. Verify critical info.</span>
+</div>
+</div>
+</aside>
+
+</body></html>

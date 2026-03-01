@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  # PostgreSQL with pgvector extension
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: docsai-db
+    environment:
+      POSTGRES_USER: docsai
+      POSTGRES_PASSWORD: docsai
+      POSTGRES_DB: docsai
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U docsai" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: docsai-backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://docsai:docsai@db:5432/docsai
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      STORAGE_PATH: /app/storage
+      PDF_STORAGE_PATH: /app/storage/pdfs
+      RENDER_STORAGE_PATH: /app/storage/renders
+    volumes:
+      - ./storage:/app/storage
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: docsai-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_API_URL: http://localhost:8000
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

@@ -1,0 +1,24 @@
+# FastAPI + Server
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+
+# Database
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.30.0
+alembic==1.14.1
+pgvector==0.3.6
+
+# PDF Processing
+pymupdf==1.25.3
+pytesseract==0.3.13
+Pillow==11.1.0
+
+# AI / Embeddings
+httpx==0.28.1
+tiktoken==0.8.0
+
+# Utilities
+python-dotenv==1.0.1
+pydantic-settings==2.7.1
+aiofiles==24.1.0

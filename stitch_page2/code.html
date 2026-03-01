@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DOCS.ai - Engineering RAG Chatbot</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6", // Bright blue primary
+                        secondary: "#8b5cf6", // Purple accent
+                        "background-light": "#f1f5f9", // Slate 100
+                        "background-dark": "#0f172a", // Slate 900
+                        "sidebar-dark": "#0B1120", // Darker slate for sidebar
+                        "card-dark": "#1e293b", // Slate 800 for cards
+                        "input-dark": "#334155", // Slate 700 for inputs
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }.custom-scrollbar::-webkit-scrollbar {
+                width: 6px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                background-color: #475569;
+                border-radius: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 font-sans h-screen flex overflow-hidden dark">
+<aside class="w-64 bg-white dark:bg-sidebar-dark border-r border-slate-200 dark:border-slate-800 flex flex-col transition-all duration-300">
+<div class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                AI
+            </div>
+<div>
+<h1 class="font-bold text-lg leading-tight dark:text-white">DOCS.ai</h1>
+<p class="text-xs text-slate-500 dark:text-slate-400">TNB Genco</p>
+</div>
+</div>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+<span class="material-icons-outlined text-xl">keyboard_double_arrow_left</span>
+</button>
+</div>
+<nav class="flex-1 px-3 py-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors" href="#">
+<span class="material-icons-outlined">library_books</span>
+<span class="font-medium">Library</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary dark:text-blue-400 dark:bg-blue-500/10 border border-primary/20 dark:border-blue-500/20 transition-colors" href="#">
+<span class="material-icons-outlined">smart_toy</span>
+<span class="font-medium">Chatbot (RAG)</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors" href="#">
+<span class="material-icons-outlined">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></div>
+<div class="overflow-hidden">
+<p class="text-sm font-medium dark:text-white truncate">Engineering Lead</p>
+<p class="text-xs text-slate-500 dark:text-slate-400 truncate">eng.lead@tnb.com</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0">
+<header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark flex items-center justify-between px-6">
+<div class="flex items-center gap-2">
+<span class="material-icons-outlined text-slate-400">search</span>
+<span class="text-sm text-slate-500 dark:text-slate-400">Search specific query history...</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="h-8 bg-white rounded px-2 flex items-center gap-2">
+<img alt="Logo 1" class="h-6 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCU3s_DDmzAy3BaqDP7Aa-IXuiiq9XKd1l91KUwtXMthZvbghkmgSt9lwZ6v7ebw9ftjm_L9d_T-8B0wnVefDacezl7gqRAIj0w-wMfo-NmbqufheLxUMLgA0hEqQI29s5GpPGHPKA9HHmil7r1FrORLS1ouNj1UmEoM9kgyvjOiudwhHMw4Zkt8WWlsJQtKs6MlEVmLXbjvEeqWEFOiI59lvMK1zmfKfrAxy5n2M4lu66ox8iFfe5lQmHUWcendL2Eq1kV0MVThVc"/>
+<div class="h-4 w-px bg-slate-300"></div>
+<span class="text-xs font-bold text-slate-700 tracking-tighter">GENCO</span>
+</div>
+</div>
+</header>
+<div class="flex-1 flex overflow-hidden">
+<div class="flex-1 flex flex-col border-r border-slate-200 dark:border-slate-800 relative bg-slate-50 dark:bg-background-dark/50">
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
+<div class="flex justify-center mb-8">
+<span class="text-xs font-medium text-slate-400 bg-slate-200 dark:bg-slate-800 px-3 py-1 rounded-full">Today, 10:23 AM</span>
+</div>
+<div class="flex gap-4 max-w-3xl">
+<div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex-shrink-0 flex items-center justify-center text-white text-xs">
+                        AI
+                    </div>
+<div class="space-y-2">
+<div class="bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 rounded-2xl rounded-tl-none p-4 shadow-sm text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+<p>Hello! I'm your Engineering Assistant. I have access to the full repository of RCA documents, P&amp;IDs, and manuals for the Sultan Azlan Shah (Jimah) station. How can I help you today?</p>
+</div>
+</div>
+</div>
+<div class="flex gap-4 max-w-3xl ml-auto flex-row-reverse">
+<div class="w-8 h-8 rounded-full bg-slate-300 dark:bg-slate-600 flex-shrink-0 flex items-center justify-center text-slate-600 dark:text-slate-200 text-xs">
+                        ME
+                    </div>
+<div class="space-y-2">
+<div class="bg-primary text-white rounded-2xl rounded-tr-none p-4 shadow-sm text-sm leading-relaxed">
+<p>What caused the high vibration on the ST LP Turbine rear bearing last month?</p>
+</div>
+</div>
+</div>
+<div class="flex gap-4 max-w-3xl">
+<div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex-shrink-0 flex items-center justify-center text-white text-xs">
+                        AI
+                    </div>
+<div class="space-y-2 w-full">
+<div class="bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 rounded-2xl rounded-tl-none p-4 shadow-sm text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+<p class="mb-3">Based on the RCA report <span class="font-semibold text-blue-500 cursor-pointer hover:underline">RCA_JMJG_ST_VIB_112024.pdf</span>, the high vibration detected at the ST LP Turbine rear bearing was primarily attributed to <strong>thermal unbalance</strong> caused by a seal rub event during the startup sequence.</p>
+<p class="mb-3">Key findings include:</p>
+<ul class="list-disc list-inside space-y-1 mb-4 text-slate-600 dark:text-slate-300 pl-2">
+<li>Phase angle change of 45° indicating mass shift.</li>
+<li>Vibration amplitude peaked at 180µm.</li>
+<li>Rubbing marks found on the labyrinth seal during inspection.</li>
+</ul>
+<div class="flex gap-2 mt-4">
+<button class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs font-medium text-slate-600 dark:text-slate-300 transition-colors border border-slate-200 dark:border-slate-700">
+<span class="material-icons-outlined text-[16px]">picture_as_pdf</span>
+                                    View Full Report
+                                </button>
+<button class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs font-medium text-slate-600 dark:text-slate-300 transition-colors border border-slate-200 dark:border-slate-700">
+<span class="material-icons-outlined text-[16px]">analytics</span>
+                                    See Vibration Trends
+                                </button>
+</div>
+</div>
+<div class="text-xs text-slate-400 px-1">
+                            Sources: <span class="hover:text-primary cursor-pointer">Page 14, RCA Report #215</span>, <span class="hover:text-primary cursor-pointer">Unit 2 Logbook</span>
+</div>
+</div>
+</div>
+<div class="flex gap-4 max-w-3xl ml-auto flex-row-reverse">
+<div class="w-8 h-8 rounded-full bg-slate-300 dark:bg-slate-600 flex-shrink-0 flex items-center justify-center text-slate-600 dark:text-slate-200 text-xs">
+                        ME
+                    </div>
+<div class="space-y-2">
+<div class="bg-primary text-white rounded-2xl rounded-tr-none p-4 shadow-sm text-sm leading-relaxed">
+<p>Show me the diagram of the Labyrinth seal arrangement mentioned.</p>
+</div>
+</div>
+</div>
+<div class="flex gap-4 max-w-3xl animate-pulse">
+<div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex-shrink-0 flex items-center justify-center text-white text-xs">
+                        AI
+                    </div>
+<div class="space-y-2 w-full">
+<div class="bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-700 rounded-2xl rounded-tl-none p-4 shadow-sm w-3/4">
+<div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-2/3 mb-2"></div>
+<div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-white dark:bg-background-dark border-t border-slate-200 dark:border-slate-800">
+<div class="relative max-w-4xl mx-auto">
+<div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+<span class="material-icons-outlined text-slate-400">auto_awesome</span>
+</div>
+<input class="w-full bg-slate-100 dark:bg-input-dark border-none rounded-xl py-3.5 pl-10 pr-12 text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary shadow-inner" placeholder="Ask about engineering specs, drawings, or manuals..." type="text"/>
+<div class="absolute inset-y-0 right-2 flex items-center">
+<button class="p-1.5 bg-primary hover:bg-blue-600 text-white rounded-lg transition-colors shadow-md">
+<span class="material-icons-outlined text-sm">send</span>
+</button>
+</div>
+</div>
+<div class="text-center mt-2">
+<p class="text-[10px] text-slate-400 dark:text-slate-500">AI can make mistakes. Verify critical engineering data against original documents.</p>
+</div>
+</div>
+</div>
+<aside class="w-[450px] hidden xl:flex flex-col bg-white dark:bg-card-dark border-l border-slate-200 dark:border-slate-800">
+<div class="h-14 flex items-center justify-between px-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-sidebar-dark/50">
+<div class="flex items-center gap-2">
+<span class="material-icons-outlined text-primary text-sm">description</span>
+<h2 class="text-sm font-semibold dark:text-slate-200">Source Context</h2>
+</div>
+<div class="flex gap-2">
+<button class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" title="Expand">
+<span class="material-icons-outlined text-lg">open_in_full</span>
+</button>
+<button class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" title="Close">
+<span class="material-icons-outlined text-lg">close</span>
+</button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-0 bg-slate-100 dark:bg-[#0c1220] relative">
+<div class="sticky top-0 z-10 bg-slate-800 text-white px-4 py-2 flex items-center justify-between text-xs shadow-md">
+<span class="truncate max-w-[200px]">Manual_ST_Turbine_Overhaul_v2.pdf</span>
+<div class="flex items-center gap-3">
+<span>Page 42 / 128</span>
+<div class="flex gap-1">
+<span class="material-icons-outlined text-sm cursor-pointer hover:text-blue-400">remove</span>
+<span class="material-icons-outlined text-sm cursor-pointer hover:text-blue-400">add</span>
+</div>
+</div>
+</div>
+<div class="p-6 flex justify-center min-h-full items-start">
+<div class="bg-white shadow-xl min-h-[600px] w-full max-w-[360px] p-8 text-[8px] text-slate-800 relative select-none">
+<div class="border-2 border-slate-900 h-full p-2 relative">
+<div class="absolute top-0 right-0 p-1 font-bold text-[6px]">DWG-2024-ST-001</div>
+<h3 class="font-bold text-[10px] mb-4 text-center uppercase border-b border-black pb-2">Labyrinth Seal Cross Section</h3>
+<div class="relative h-64 border border-slate-300 my-4 flex items-center justify-center bg-slate-50">
+<svg class="w-full h-full opacity-60" viewBox="0 0 100 100">
+<rect fill="none" height="20" stroke="black" stroke-width="0.5" width="80" x="10" y="40"></rect>
+<path d="M10 40 L20 30 M20 40 L30 30 M30 40 L40 30 M40 40 L50 30" stroke="black" stroke-width="0.5"></path>
+<rect fill="none" height="5" stroke="black" stroke-width="0.5" width="5" x="15" y="35"></rect>
+<circle cx="50" cy="50" fill="none" r="15" stroke="black" stroke-dasharray="2,2" stroke-width="0.5"></circle>
+</svg>
+<div class="absolute top-10 left-10 right-10 bottom-16 border-2 border-yellow-400 bg-yellow-400/20 z-10 animate-pulse"></div>
+<div class="absolute top-8 left-8 bg-yellow-400 text-black px-1 font-bold rounded text-[6px]">REF: 4.2.1</div>
+</div>
+<div class="space-y-2 text-justify font-serif text-slate-600 leading-tight">
+<p>4.2.1 <span class="bg-yellow-200">Seal Clearance Specifications</span></p>
+<p>The radial clearance for the labyrinth seal segments (Item 4A) must be maintained between 0.50mm and 0.65mm at cold state. Any deviation exceeding 0.10mm requires immediate replacement of the segment strips.</p>
+<p class="bg-yellow-200 text-black">Note: Ensure alignment pins (Item 7) are seated correctly before final torque application to prevent thermal bowing during startup.</p>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+<div class="mt-4 border border-slate-300 p-2">
+<p class="font-bold mb-1">Table 3.1: Torque Settings</p>
+<div class="grid grid-cols-2 gap-1 border-t border-slate-300 pt-1">
+<div>Bolt M12</div>
+<div>45 Nm</div>
+<div>Bolt M16</div>
+<div>85 Nm</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-white dark:bg-card-dark border-t border-slate-200 dark:border-slate-800">
+<h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Document Metadata</h4>
+<div class="space-y-3">
+<div class="flex justify-between text-xs">
+<span class="text-slate-500">File Name:</span>
+<span class="text-slate-700 dark:text-slate-300 font-medium truncate w-40 text-right">Manual_ST_Turbine_Overhaul_v2.pdf</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-slate-500">Date Modified:</span>
+<span class="text-slate-700 dark:text-slate-300 font-medium">Nov 12, 2024</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-slate-500">Relevance Score:</span>
+<span class="text-green-600 font-bold bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded">98.2%</span>
+</div>
+<button class="w-full mt-2 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-primary dark:text-blue-400 text-xs font-semibold rounded transition-colors flex items-center justify-center gap-2">
+<span class="material-icons-outlined text-sm">download</span>
+                        Download Original PDF
+                    </button>
+</div>
+</div>
+</aside>
+</div>
+</main>
+
+</body></html>
